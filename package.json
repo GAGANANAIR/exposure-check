@@ -1,0 +1,19 @@
+{
+  "name": "exposure-check",
+  "version": "1.0.0",
+  "description": "Free self-service exposure checker: leaked passwords, breached emails, phone validity — built entirely on free-tier APIs.",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "libphonenumber-js": "^1.11.9",
+    "dotenv": "^16.4.5"
+  }
+}

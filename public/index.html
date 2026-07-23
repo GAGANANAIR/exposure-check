@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Exposure Report — free self-check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="sheet">
+
+  <header class="sheet-head">
+    <div class="case-no">CASE FILE // SELF-INTAKE</div>
+    <h1>Exposure Report</h1>
+    <p class="subhead">Check your own password, email, and phone against public breach data. Nothing you enter is stored — every check runs, gets scored, and is discarded.</p>
+  </header>
+
+  <section class="intake" id="password-block">
+    <div class="intake-label"><span class="tag">01</span> Password</div>
+    <div class="intake-row">
+      <input type="password" id="password-input" placeholder="Enter a password to check" autocomplete="new-password" />
+      <button id="password-btn">Check</button>
+    </div>
+    <div class="result" id="password-result"></div>
+  </section>
+
+  <section class="intake" id="email-block">
+    <div class="intake-label"><span class="tag">02</span> Email address</div>
+    <div class="intake-row">
+      <input type="email" id="email-input" placeholder="you@example.com" autocomplete="off" />
+      <button id="email-btn">Check</button>
+    </div>
+    <div class="result" id="email-result"></div>
+  </section>
+
+  <section class="intake" id="phone-block">
+    <div class="intake-label"><span class="tag">03</span> Phone number</div>
+    <div class="intake-row">
+      <input type="tel" id="phone-input" placeholder="+1 555 123 4567" autocomplete="off" />
+      <button id="phone-btn">Check</button>
+    </div>
+    <div class="result" id="phone-result"></div>
+  </section>
+
+  <section class="verdict-section">
+    <div class="intake-label"><span class="tag">—</span> Overall exposure</div>
+    <div class="verdict" id="verdict">
+      <div class="stamp" id="stamp">RUN A CHECK ABOVE</div>
+    </div>
+  </section>
+
+  <footer class="sheet-foot">
+    <p>Sources: HIBP Pwned Passwords (free, k-anonymity) · XposedOrNot breach index (free) · libphonenumber + optional NumVerify (free tier). This tool checks public breach data only — it is not dark-web monitoring. See <code>README.md</code> for setup.</p>
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
