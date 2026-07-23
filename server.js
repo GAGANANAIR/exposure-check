@@ -6,6 +6,7 @@ const rateLimit = require('./middleware/rateLimit');
 const passwordRoute = require('./routes/password');
 const emailRoute = require('./routes/email');
 const phoneRoute = require('./routes/phone');
+const analyticsRoute = require('./routes/analytics');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -18,6 +19,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/password-check', rateLimit, passwordRoute);
 app.use('/api/email-check', rateLimit, emailRoute);
 app.use('/api/phone-check', rateLimit, phoneRoute);
+app.use("/api/analytics", analyticsRoute);
 
 app.get('/api/health', (req, res) => {
   res.json({
