@@ -80,7 +80,7 @@ function logCheck(req, type, value, meta = {}, startTime) {
   const { browser, os, device } = parseUA(req.headers['user-agent']);
   const country = req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || req.headers['x-country-code'] || 'Unknown';
 
-  const row = [
+  const rowValues = [
     new Date().toISOString(),
     getVisitorId(req),
     maskIp(req.ip),
@@ -95,7 +95,8 @@ function logCheck(req, type, value, meta = {}, startTime) {
     status,
     durationMs,
     meta.httpStatus || 200
-  ]
+  ];
+  const row = rowValues
     .map(v => `"${String(v ?? '').replace(/"/g, '""')}"`)
     .join(',');
 
@@ -104,6 +105,12 @@ function logCheck(req, type, value, meta = {}, startTime) {
   } catch (err) {
     console.error('logCheck: failed to write log:', err.message);
   }
+
+  // Fire-and-forget persistent copy to GitHub — doesn't block or slow
+  // down the response to the actual visitor. No-ops silently if
+  // GITHUB_LOG_TOKEN / GITHUB_LOG_REPO aren't configured.
+  const { appendRowToGitHub } = require('./githubLogger');
+  appendRowToGitHub(row).catch(() => {}); // errors are already logged inside
 }
 
 module.exports = { logCheck };
