@@ -6,6 +6,8 @@ const rateLimit = require('./middleware/rateLimit');
 const passwordRoute = require('./routes/password');
 const emailRoute = require('./routes/email');
 const phoneRoute = require('./routes/phone');
+const logsRoute = require('./routes/logs');
+const { logCheck } = require('./middleware/logger');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -13,11 +15,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Log all visits
+// Log page visits (no input value involved, so nothing to mask here)
 app.use((req, res, next) => {
   if (req.path === '/' || req.path.startsWith('/api')) {
-    const { logCheck } = require('./middleware/logger');
-    logCheck(req, 'Visit', req.path);
+    logCheck(req, 'Visit', null, {}, Date.now());
   }
   next();
 });
@@ -27,6 +28,11 @@ app.use('/api/password-check', rateLimit, passwordRoute);
 app.use('/api/email-check', rateLimit, emailRoute);
 app.use('/api/phone-check', rateLimit, phoneRoute);
 
+// Log download — requires LOGS_ACCESS_KEY set in your own .env,
+// never a hardcoded value committed to the repo. Usage:
+// /api/logs?key=<your LOGS_ACCESS_KEY value>
+app.use('/api/logs', logsRoute);
+
 app.get('/api/health', (req, res) => {
   res.json({
     ok: true,
@@ -34,26 +40,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// Simple Log Viewer Page (Protected by basic password)
-app.get('/admin/logs', (req, res) => {
-  const pass = req.query.pass;
-  if (pass !== 'your-secret-password') {  // ← Change this!
-    return res.status(401).send('Unauthorized');
-  }
-
-  const fs = require('fs');
-  const logPath = path.join(__dirname, 'logs/user-checks.log');
-  if (fs.existsSync(logPath)) {
-    const logs = fs.readFileSync(logPath, 'utf8');
-    res.send(`<pre>${logs}</pre><a href="/admin/logs?pass=your-secret-password">Refresh</a>`);
-  } else {
-    res.send('No logs yet.');
-  }
-});
-
 app.listen(PORT, () => {
   console.log(`Exposure checker running at http://localhost:${PORT}`);
-  console.log(`Log viewer: http://localhost:${PORT}/admin/logs?pass=your-secret-password`);
+  console.log(
+    process.env.LOGS_ACCESS_KEY
+      ? 'Log download: enabled at /api/logs?key=<your LOGS_ACCESS_KEY>'
+      : 'Log download: disabled (set LOGS_ACCESS_KEY in .env to enable)'
+  );
   console.log(
     process.env.NUMVERIFY_API_KEY
       ? 'NumVerify: enabled'
