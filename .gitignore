@@ -3,5 +3,6 @@ node_modules/
 .DS_Store
 npm-debug.log*
 
-# Runtime-generated visitor analytics log — never commit real visitor data
+# Runtime-generated logs — never commit real visitor/check data
 visitor_logs.csv
+check_logs.csv
