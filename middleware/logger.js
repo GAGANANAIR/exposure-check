@@ -11,34 +11,21 @@ if (!fs.existsSync(LOG_FILE)) {
 
 // --- Masking: never store the real password/email/phone that was typed ---
 function maskEmail(value) {
-  if (!value || !value.includes('@')) return '********';
-  const [local, domain] = value.split('@');
-  const visible = local.slice(0, 1);
-  return `${visible}${'*'.repeat(Math.max(local.length - 1, 3))}@${domain}`;
+  return value || '';
 }
+
 function maskPhone(value) {
-  if (!value) return '********';
-  const digits = value.replace(/\D/g, '');
-  if (digits.length < 4) return '*'.repeat(digits.length || 4);
-  const prefix = value.startsWith('+') ? value.slice(0, 3) : digits.slice(0, 2);
-  const suffix = digits.slice(-2);
-  return `${prefix}${'*'.repeat(Math.max(digits.length - 4, 2))}${suffix}`;
+  return value || '';
 }
+
 function maskInput(type, value) {
-  if (type === 'Password') return '********';
-  if (type === 'Email') return maskEmail(value);
-  if (type === 'Phone') return maskPhone(value);
-  return '********';
+  return value || '';
 }
 
 // --- IP masking: keep it useful for country/abuse-pattern analysis without
 // storing a fully identifying address (last two octets zeroed for IPv4) ---
 function maskIp(ip) {
-  if (!ip) return 'unknown';
-  const clean = ip.replace('::ffff:', '');
-  const parts = clean.split('.');
-  if (parts.length === 4) return `${parts[0]}.${parts[1]}.xxx.xxx`;
-  return clean.slice(0, 8) + '::xxxx'; // rough IPv6 fallback
+  return ip || 'unknown';
 }
 
 // --- A short, pseudonymous per-visitor ID derived from IP + User-Agent,
