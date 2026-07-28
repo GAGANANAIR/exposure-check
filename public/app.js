@@ -6,38 +6,54 @@ const state = {
 
 function setLoading(resultEl, label) {
   resultEl.className = 'result';
-  resultEl.innerHTML = `<span class="scan-line">${label}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+  const textEl = resultEl.querySelector('.result-text');
+  const barEl = resultEl.querySelector('.redaction-bar');
+  textEl.textContent = '';
+  barEl.className = 'redaction-bar scanning';
+  barEl.textContent = label;
 }
 
 function setResult(resultEl, { ok, headline, detail }) {
   resultEl.className = `result ${ok ? 'clear' : 'exposed'}`;
-  resultEl.innerHTML = `${headline}${detail ? `<span class="detail">${detail}</span>` : ''}`;
+  const textEl = resultEl.querySelector('.result-text');
+  const barEl = resultEl.querySelector('.redaction-bar');
+  textEl.innerHTML = `${headline}${detail ? `<span class="detail">${detail}</span>` : ''}`;
+
+  // Let the text render underneath first, then peel the redaction bar
+  // away to reveal it — the bar slides sideways like a censor strip.
+  barEl.className = 'redaction-bar';
+  barEl.textContent = '';
+  requestAnimationFrame(() => {
+    barEl.classList.add('lifting');
+  });
 }
 
 function setError(resultEl, message) {
   resultEl.className = 'result';
-  resultEl.innerHTML = `<span class="detail">${message}</span>`;
+  const textEl = resultEl.querySelector('.result-text');
+  const barEl = resultEl.querySelector('.redaction-bar');
+  textEl.innerHTML = `<span class="detail">${message}</span>`;
+  barEl.className = 'redaction-bar';
+  barEl.textContent = '';
+  requestAnimationFrame(() => {
+    barEl.classList.add('lifting');
+  });
 }
 
 // ---------------------------------------------------------------------
 // Progress tracker: fills in step 1/2/3 as each check completes
 // ---------------------------------------------------------------------
 function updateProgress() {
-  const steps = [
-    { el: document.getElementById('progress-1'), value: state.password, exposedIsBad: true },
-    { el: document.getElementById('progress-2'), value: state.email, exposedIsBad: true },
-    { el: document.getElementById('progress-3'), value: state.phone, exposedIsBad: true },
+  const tabs = [
+    { el: document.getElementById('tab-1'), value: state.password },
+    { el: document.getElementById('tab-2'), value: state.email },
+    { el: document.getElementById('tab-3'), value: state.phone },
   ];
-  steps.forEach(({ el, value }) => {
-    el.classList.remove('done', 'exposed');
+  tabs.forEach(({ el, value }) => {
+    el.classList.remove('done', 'exposed', 'active');
     if (value === true) el.classList.add('exposed');
     else if (value === false) el.classList.add('done');
   });
-
-  const line1 = document.getElementById('progress-line-1');
-  const line2 = document.getElementById('progress-line-2');
-  line1.classList.toggle('done', state.password !== null);
-  line2.classList.toggle('done', state.email !== null);
 }
 
 // ---------------------------------------------------------------------
@@ -234,6 +250,18 @@ document.getElementById('phone-btn').addEventListener('click', checkPhone);
 document.getElementById('password-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkPassword());
 document.getElementById('email-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkEmail());
 document.getElementById('phone-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkPhone());
+
+// Folder tabs lift slightly while their section's input is focused —
+// like flipping open that page of the case file.
+function wireTabFocus(inputId, tabId) {
+  const input = document.getElementById(inputId);
+  const tab = document.getElementById(tabId);
+  input.addEventListener('focus', () => tab.classList.add('active'));
+  input.addEventListener('blur', () => tab.classList.remove('active'));
+}
+wireTabFocus('password-input', 'tab-1');
+wireTabFocus('email-input', 'tab-2');
+wireTabFocus('phone-input', 'tab-3');
 
 // ---------------------------------------------------------------------
 // Copy summary — builds a short plain-text recap of results (never the
