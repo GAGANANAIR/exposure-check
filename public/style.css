@@ -230,3 +230,122 @@ button:focus-visible { outline: 2px solid var(--stamp-blue); outline-offset: 2px
   .intake-row { flex-direction: column; }
   button { width: 100%; }
 }
+
+/* ===================== Progress tracker ===================== */
+.progress-track{
+  display:flex; align-items:center; margin-top:22px;
+}
+.progress-step{
+  width:26px; height:26px; border-radius:50%; border:2px solid var(--rule);
+  display:flex; align-items:center; justify-content:center;
+  font-family: var(--mono); font-size:11px; color: var(--ink-soft);
+  background: var(--paper); transition: all 0.3s ease; flex-shrink:0;
+}
+.progress-step.done{
+  background: var(--clear); border-color: var(--clear); color:#fff;
+  transform: scale(1.08);
+}
+.progress-step.exposed{
+  background: var(--exposed); border-color: var(--exposed); color:#fff;
+  transform: scale(1.08);
+}
+.progress-line{
+  flex:1; height:2px; background: var(--rule); margin: 0 6px;
+  position:relative; overflow:hidden;
+}
+.progress-line::after{
+  content:''; position:absolute; inset:0; background: var(--clear);
+  transform: scaleX(0); transform-origin:left; transition: transform 0.4s ease;
+}
+.progress-line.done::after{ transform: scaleX(1); }
+
+/* ===================== Password strength meter ===================== */
+.input-wrap{ position:relative; flex:1; display:flex; }
+.input-wrap input{ padding-right:40px; }
+.reveal-btn{
+  position:absolute; right:4px; top:50%; transform:translateY(-50%);
+  background:none; border:none; padding:6px 8px; cursor:pointer; font-size:15px;
+  color: var(--ink-soft); opacity:0.6; transition: opacity 0.15s ease;
+}
+.reveal-btn:hover{ opacity:1; background:none; }
+
+.strength-meter{
+  display:flex; align-items:center; gap:10px; margin-top:8px;
+  height:0; opacity:0; overflow:hidden; transition: height 0.25s ease, opacity 0.25s ease;
+}
+.strength-meter.show{ height:20px; opacity:1; }
+.strength-bar{
+  flex:1; height:5px; background: var(--rule); border-radius:3px; overflow:hidden;
+}
+.strength-fill{
+  height:100%; width:0%; border-radius:3px; background: var(--exposed);
+  transition: width 0.25s ease, background 0.25s ease;
+}
+.strength-label{
+  font-family: var(--mono); font-size:10.5px; letter-spacing:0.05em;
+  color: var(--ink-soft); white-space:nowrap; min-width:52px;
+}
+
+/* ===================== Result reveal animation ===================== */
+.result{ animation: none; }
+.result.clear, .result.exposed{
+  animation: resultReveal 0.35s ease;
+}
+@keyframes resultReveal{
+  from{ opacity:0; transform: translateY(-4px); }
+  to{ opacity:1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce){
+  .result.clear, .result.exposed{ animation:none; }
+}
+
+/* ===================== Scanning-line loading state ===================== */
+.result .scan-line{
+  display:inline-block; position:relative; overflow:hidden;
+  background: var(--redaction); color:transparent; padding:0 6px; border-radius:2px;
+}
+.result .scan-line::after{
+  content:''; position:absolute; top:0; left:-100%; width:60%; height:100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  animation: scan 1.1s ease-in-out infinite;
+}
+@keyframes scan{
+  0%{ left:-60%; } 100%{ left:120%; }
+}
+@media (prefers-reduced-motion: reduce){
+  .result .scan-line::after{ animation:none; display:none; }
+}
+
+/* ===================== Stamp slam-down animation ===================== */
+.stamp.animate-in{ animation: stampSlam 0.35s cubic-bezier(.2,1.4,.4,1); }
+@keyframes stampSlam{
+  0%{ transform: rotate(-3deg) scale(2.2); opacity:0; }
+  60%{ transform: rotate(-3deg) scale(0.94); opacity:1; }
+  100%{ transform: rotate(-3deg) scale(1); }
+}
+@media (prefers-reduced-motion: reduce){
+  .stamp.animate-in{ animation:none; }
+}
+
+/* Subtle celebratory pulse once, when everything checked comes back clear */
+.stamp.all-clear-pulse{ animation: allClearPulse 0.6s ease 1; }
+@keyframes allClearPulse{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(63,109,78,0); }
+  50%{ box-shadow: 0 0 0 8px rgba(63,109,78,0.12); }
+}
+
+/* ===================== Copy summary button ===================== */
+.copy-row{
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin-top:4px;
+}
+.copy-btn{
+  font-family: var(--mono); font-size:11.5px; padding:8px 16px;
+  background: transparent; color: var(--ink-soft); border:1px solid var(--rule);
+}
+.copy-btn:hover{ background: var(--paper-dark); color: var(--ink); }
+.copy-confirm{
+  font-family: var(--mono); font-size:11px; color: var(--clear);
+  opacity:0; transition: opacity 0.2s ease;
+}
+.copy-confirm.show{ opacity:1; }
