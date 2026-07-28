@@ -16,13 +16,27 @@
     <div class="case-no">CASE FILE // SELF-INTAKE</div>
     <h1>Exposure Report</h1>
     <p class="subhead">Check your own password, email, and phone against public breach data.</p>
+    <div class="progress-track" aria-hidden="true">
+      <div class="progress-step" id="progress-1"><span>1</span></div>
+      <div class="progress-line" id="progress-line-1"></div>
+      <div class="progress-step" id="progress-2"><span>2</span></div>
+      <div class="progress-line" id="progress-line-2"></div>
+      <div class="progress-step" id="progress-3"><span>3</span></div>
+    </div>
   </header>
 
   <section class="intake" id="password-block">
     <div class="intake-label"><span class="tag">01</span> Password</div>
     <div class="intake-row">
-      <input type="password" id="password-input" placeholder="Enter a password to check" autocomplete="new-password" />
+      <div class="input-wrap">
+        <input type="password" id="password-input" placeholder="Enter a password to check" autocomplete="new-password" />
+        <button type="button" class="reveal-btn" id="password-reveal" aria-label="Show password">👁</button>
+      </div>
       <button id="password-btn">Check</button>
+    </div>
+    <div class="strength-meter" id="strength-meter" aria-hidden="true">
+      <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+      <span class="strength-label" id="strength-label"></span>
     </div>
     <div class="result" id="password-result"></div>
   </section>
@@ -49,6 +63,10 @@
     <div class="intake-label"><span class="tag">—</span> Overall exposure</div>
     <div class="verdict" id="verdict">
       <div class="stamp" id="stamp">RUN A CHECK ABOVE</div>
+    </div>
+    <div class="copy-row">
+      <button type="button" class="copy-btn" id="copy-btn">Copy summary</button>
+      <span class="copy-confirm" id="copy-confirm"></span>
     </div>
   </section>
 
