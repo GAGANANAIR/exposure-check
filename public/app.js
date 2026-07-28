@@ -6,7 +6,7 @@ const state = {
 
 function setLoading(resultEl, label) {
   resultEl.className = 'result';
-  resultEl.innerHTML = `<span class="redaction-line">${label}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+  resultEl.innerHTML = `<span class="scan-line">${label}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
 }
 
 function setResult(resultEl, { ok, headline, detail }) {
@@ -19,9 +19,82 @@ function setError(resultEl, message) {
   resultEl.innerHTML = `<span class="detail">${message}</span>`;
 }
 
+// ---------------------------------------------------------------------
+// Progress tracker: fills in step 1/2/3 as each check completes
+// ---------------------------------------------------------------------
+function updateProgress() {
+  const steps = [
+    { el: document.getElementById('progress-1'), value: state.password, exposedIsBad: true },
+    { el: document.getElementById('progress-2'), value: state.email, exposedIsBad: true },
+    { el: document.getElementById('progress-3'), value: state.phone, exposedIsBad: true },
+  ];
+  steps.forEach(({ el, value }) => {
+    el.classList.remove('done', 'exposed');
+    if (value === true) el.classList.add('exposed');
+    else if (value === false) el.classList.add('done');
+  });
+
+  const line1 = document.getElementById('progress-line-1');
+  const line2 = document.getElementById('progress-line-2');
+  line1.classList.toggle('done', state.password !== null);
+  line2.classList.toggle('done', state.email !== null);
+}
+
+// ---------------------------------------------------------------------
+// Live client-side password strength meter — pure heuristic, runs
+// entirely locally, sends nothing anywhere. Just gives quick visual
+// feedback before someone even hits "Check".
+// ---------------------------------------------------------------------
+function estimateStrength(pw) {
+  if (!pw) return { score: 0, label: '' };
+  let score = 0;
+  if (pw.length >= 8) score++;
+  if (pw.length >= 12) score++;
+  if (/[a-z]/.test(pw) && /[A-Z]/.test(pw)) score++;
+  if (/\d/.test(pw)) score++;
+  if (/[^a-zA-Z0-9]/.test(pw)) score++;
+  if (pw.length < 6) score = Math.min(score, 1);
+
+  const labels = ['Very weak', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
+  return { score, label: labels[score] || labels[labels.length - 1] };
+}
+
+function updateStrengthMeter() {
+  const input = document.getElementById('password-input');
+  const meter = document.getElementById('strength-meter');
+  const fill = document.getElementById('strength-fill');
+  const label = document.getElementById('strength-label');
+
+  if (!input.value) {
+    meter.classList.remove('show');
+    return;
+  }
+  meter.classList.add('show');
+  const { score, label: text } = estimateStrength(input.value);
+  const pct = Math.min((score / 5) * 100, 100);
+  fill.style.width = `${pct}%`;
+  const colors = ['#b3311d', '#c25a1e', '#c9922c', '#7a8f3f', '#3f6d4e', '#2a4b7c'];
+  fill.style.background = colors[score] || colors[colors.length - 1];
+  label.textContent = text;
+}
+
+document.getElementById('password-input').addEventListener('input', updateStrengthMeter);
+
+// Show/hide password toggle
+document.getElementById('password-reveal').addEventListener('click', () => {
+  const input = document.getElementById('password-input');
+  const btn = document.getElementById('password-reveal');
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.textContent = showing ? '👁' : '🙈';
+  btn.setAttribute('aria-label', showing ? 'Show password' : 'Hide password');
+});
+
 function updateVerdict() {
   const stamp = document.getElementById('stamp');
   const checked = [state.password, state.email, state.phone].filter((v) => v !== null);
+
+  updateProgress();
 
   if (checked.length === 0) {
     stamp.className = 'stamp';
@@ -30,13 +103,23 @@ function updateVerdict() {
   }
 
   const anyExposed = state.password === true || state.email === true || state.phone === true;
+  const prevClass = stamp.className;
 
   if (anyExposed) {
-    stamp.className = 'stamp exposed';
+    stamp.className = 'stamp exposed animate-in';
     stamp.textContent = 'EXPOSURE FOUND';
   } else {
-    stamp.className = 'stamp clear';
+    stamp.className = 'stamp clear animate-in';
     stamp.textContent = checked.length < 3 ? 'CLEAR SO FAR' : 'ALL CLEAR';
+    if (checked.length === 3) {
+      stamp.classList.add('all-clear-pulse');
+    }
+  }
+  // Retrigger animation even if the class was already set (e.g. two clear results in a row)
+  if (prevClass === stamp.className) {
+    stamp.classList.remove('animate-in');
+    void stamp.offsetWidth; // force reflow
+    stamp.classList.add('animate-in');
   }
 }
 
@@ -151,3 +234,26 @@ document.getElementById('phone-btn').addEventListener('click', checkPhone);
 document.getElementById('password-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkPassword());
 document.getElementById('email-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkEmail());
 document.getElementById('phone-input').addEventListener('keydown', (e) => e.key === 'Enter' && checkPhone());
+
+// ---------------------------------------------------------------------
+// Copy summary — builds a short plain-text recap of results (never the
+// actual password/email/phone value, only outcomes) and copies it.
+// ---------------------------------------------------------------------
+document.getElementById('copy-btn').addEventListener('click', async () => {
+  const lines = ['Exposure Report summary:'];
+  if (state.password !== null) lines.push(`- Password: ${state.password ? 'found in a breach' : 'not found in known breaches'}`);
+  if (state.email !== null) lines.push(`- Email: ${state.email ? 'found in a breach' : 'no known breaches'}`);
+  if (state.phone !== null) lines.push(`- Phone: ${state.phone ? 'not a recognized number' : 'valid number format'}`);
+  if (lines.length === 1) lines.push('- No checks run yet.');
+
+  const text = lines.join('\n');
+  const confirmEl = document.getElementById('copy-confirm');
+  try {
+    await navigator.clipboard.writeText(text);
+    confirmEl.textContent = 'Copied!';
+  } catch (err) {
+    confirmEl.textContent = 'Could not copy';
+  }
+  confirmEl.classList.add('show');
+  setTimeout(() => confirmEl.classList.remove('show'), 1800);
+});
