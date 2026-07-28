@@ -10,18 +10,19 @@
 </head>
 <body>
 
+<div class="watermark" aria-hidden="true">CONFIDENTIAL</div>
+<div class="paperclip" aria-hidden="true"></div>
+
 <div class="sheet">
 
   <header class="sheet-head">
     <div class="case-no">CASE FILE // SELF-INTAKE</div>
     <h1>Exposure Report</h1>
     <p class="subhead">Check your own password, email, and phone against public breach data.</p>
-    <div class="progress-track" aria-hidden="true">
-      <div class="progress-step" id="progress-1"><span>1</span></div>
-      <div class="progress-line" id="progress-line-1"></div>
-      <div class="progress-step" id="progress-2"><span>2</span></div>
-      <div class="progress-line" id="progress-line-2"></div>
-      <div class="progress-step" id="progress-3"><span>3</span></div>
+    <div class="folder-tabs" aria-hidden="true">
+      <div class="folder-tab" id="tab-1"><span class="tab-num">01</span><span class="tab-name">Password</span></div>
+      <div class="folder-tab" id="tab-2"><span class="tab-num">02</span><span class="tab-name">Email</span></div>
+      <div class="folder-tab" id="tab-3"><span class="tab-num">03</span><span class="tab-name">Phone</span></div>
     </div>
   </header>
 
@@ -38,7 +39,10 @@
       <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
       <span class="strength-label" id="strength-label"></span>
     </div>
-    <div class="result" id="password-result"></div>
+    <div class="result" id="password-result">
+      <div class="result-text" id="password-result-text"></div>
+      <div class="redaction-bar" id="password-result-bar"></div>
+    </div>
   </section>
 
   <section class="intake" id="email-block">
@@ -47,7 +51,10 @@
       <input type="email" id="email-input" placeholder="you@example.com" autocomplete="off" />
       <button id="email-btn">Check</button>
     </div>
-    <div class="result" id="email-result"></div>
+    <div class="result" id="email-result">
+      <div class="result-text" id="email-result-text"></div>
+      <div class="redaction-bar" id="email-result-bar"></div>
+    </div>
   </section>
 
   <section class="intake" id="phone-block">
@@ -56,7 +63,10 @@
       <input type="tel" id="phone-input" placeholder="+1 555 123 4567" autocomplete="off" />
       <button id="phone-btn">Check</button>
     </div>
-    <div class="result" id="phone-result"></div>
+    <div class="result" id="phone-result">
+      <div class="result-text" id="phone-result-text"></div>
+      <div class="redaction-bar" id="phone-result-bar"></div>
+    </div>
   </section>
 
   <section class="verdict-section">
