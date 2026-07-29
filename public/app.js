@@ -114,7 +114,7 @@ function updateVerdict() {
 
   if (checked.length === 0) {
     stamp.className = 'stamp';
-    stamp.textContent = 'RUN A CHECK ABOVE';
+    stamp.textContent = 'RUN A SCAN ABOVE';
     return;
   }
 
