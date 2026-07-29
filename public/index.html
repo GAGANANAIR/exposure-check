@@ -3,22 +3,26 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Exposure Report — free self-check</title>
+<title>Exposure Scan — free self-check</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<div class="watermark" aria-hidden="true">CONFIDENTIAL</div>
-<div class="paperclip" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+</div>
+<div class="grid-overlay" aria-hidden="true"></div>
 
 <div class="sheet">
 
   <header class="sheet-head">
-    <div class="case-no">CASE FILE // SELF-INTAKE</div>
-    <h1>Exposure Report</h1>
-    <p class="subhead">Check your own password, email, and phone against public breach data.</p>
+    <div class="case-no"><span class="pulse-dot"></span>LIVE SELF-SCAN</div>
+    <h1>Exposure <span class="grad-text">Scan</span></h1>
+    <p class="subhead">Check your own password, email, and phone against public breach data — instantly, privately.</p>
     <div class="folder-tabs" aria-hidden="true">
       <div class="folder-tab" id="tab-1"><span class="tab-num">01</span><span class="tab-name">Password</span></div>
       <div class="folder-tab" id="tab-2"><span class="tab-num">02</span><span class="tab-name">Email</span></div>
@@ -33,7 +37,7 @@
         <input type="password" id="password-input" placeholder="Enter a password to check" autocomplete="new-password" />
         <button type="button" class="reveal-btn" id="password-reveal" aria-label="Show password">👁</button>
       </div>
-      <button id="password-btn">Check</button>
+      <button id="password-btn"><span>Scan</span></button>
     </div>
     <div class="strength-meter" id="strength-meter" aria-hidden="true">
       <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
@@ -49,7 +53,7 @@
     <div class="intake-label"><span class="tag">02</span> Email address</div>
     <div class="intake-row">
       <input type="email" id="email-input" placeholder="you@example.com" autocomplete="off" />
-      <button id="email-btn">Check</button>
+      <button id="email-btn"><span>Scan</span></button>
     </div>
     <div class="result" id="email-result">
       <div class="result-text" id="email-result-text"></div>
@@ -61,7 +65,7 @@
     <div class="intake-label"><span class="tag">03</span> Phone number</div>
     <div class="intake-row">
       <input type="tel" id="phone-input" placeholder="+1 555 123 4567" autocomplete="off" />
-      <button id="phone-btn">Check</button>
+      <button id="phone-btn"><span>Scan</span></button>
     </div>
     <div class="result" id="phone-result">
       <div class="result-text" id="phone-result-text"></div>
@@ -72,7 +76,7 @@
   <section class="verdict-section">
     <div class="intake-label"><span class="tag">—</span> Overall exposure</div>
     <div class="verdict" id="verdict">
-      <div class="stamp" id="stamp">RUN A CHECK ABOVE</div>
+      <div class="stamp" id="stamp">RUN A SCAN ABOVE</div>
     </div>
     <div class="copy-row">
       <button type="button" class="copy-btn" id="copy-btn">Copy summary</button>
